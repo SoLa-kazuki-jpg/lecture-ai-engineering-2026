@@ -16,7 +16,9 @@
 
 - 取り組んだレベル：実装
 - やったこと：MCP サーバーに、第3回で作った make_quiz を、引数が範囲外のときに分かりやすいメッセージを返すようにコードを修正したうえで追加した。
-　追加した make_quiz のコードは以下のとおり
+
+  追加した make_quiz のコードは以下のとおり
+  
 　
 def make_quiz(lecture: int) -> str:
     """指定した回の用語から1つを選び、確認問題と答えを返す。"""
@@ -49,12 +51,18 @@ def make_quiz(lecture: int) -> str:
         },
         ensure_ascii=False,
     )
-　
+
+ 
 ツール追加後、ターミナルから以下のとおりコマンドを実行した。
+
 ①uv run python -m app.mcp_agent --trace \ "第6回の確認問題を作って"
+
 ②uv run python -c "from app.tools import make_quiz; print(make_quiz(99))"
+
 ③uv run python -m app.mcp_agent --trace \ "第99回の確認問題を作って"
+
 - 結果：出力結果は以下のとおりだった。
+- 
 ①
 [server] glossary: コマンドで起動（uv run python -m app.mcp_server）
 [server] fetch: コマンドで起動（uvx mcp-server-fetch==2026.11.11 --no-readability-js）
@@ -76,8 +84,10 @@ MCP（Model Context Protocol）のアーキテクチャにおいて、クライ�
 [tool call]   glossary_make_quiz({'lecture': 6})
 [tool return] glossary_make_quiz -> {"question": "「MCPサーバー」の意味は？", "answer": "MCPでツール（やリソース、プロンプト）を公開する側のプログラム。公開するのはツールの名前・説明文・引数のスキーマで、クライアントの要求に応じてツールを実行…
 [usage] 入力 5,634 tokens / 出力 143 tokens / モデル応答 2 回
+
 ②
 第99回は指定できません。利用可能なのは 第1回, 第2回, 第3回, 第4回, 第6回 です。
+
 ③
 [server] glossary: コマンドで起動（uv run python -m app.mcp_server）
 [server] fetch: コマンドで起動（uvx mcp-server-fetch==2026.11.11 --no-readability-js）
@@ -94,6 +104,9 @@ MCP（Model Context Protocol）のアーキテクチャにおいて、クライ�
 [usage] 入力 5,570 tokens / 出力 78 tokens / モデル応答 2 回
 
 - 気づき・疑問：
-・app.tools.pyに自分で追加したツールをエージェントがMCPサーバから呼び出して使えることを確認できた。
-・②のように明示的にツールの場所を指定してMCPサーバを経由せずに実行することもできることが確認できた。
-・app.tools.py側のコードを修正することで、第99回の確認問題を作成するといった引数が範囲外となる場合、ツールからエージェントには「glossary_make_quiz -> 第99回は指定できません。利用可能なのは 第1回, 第2回, 第3回, 第4回, 第6回 です。」といったメッセージが返却され、エージェントは、ツールの返却結果と、それを踏まえたユーザーへの確認（どの回の問題を作成するかの確認）を出力することが確認できた。
+
+- app.tools.pyに自分で追加したツールをエージェントがMCPサーバから呼び出して使えることを確認できた。
+  
+- ②のように明示的にツールの場所を指定してMCPサーバを経由せずに実行することもできることが確認できた。
+ 
+- app.tools.py側のコードを修正することで、第99回の確認問題を作成するといった引数が範囲外となる場合、ツールからエージェントには「glossary_make_quiz -> 第99回は指定できません。利用可能なのは 第1回, 第2回, 第3回, 第4回, 第6回 です。」といったメッセージが返却され、エージェントは、ツールの返却結果と、それを踏まえたユーザーへの確認（どの回の問題を作成するかの確認）を出力することが確認できた。
