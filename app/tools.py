@@ -82,6 +82,39 @@ def get_lecture_summary(lecture: int) -> str:
     return path.read_text(encoding="utf-8")
 
 
+def make_quiz(lecture: int) -> str:
+    """指定した回の用語から1つを選び、確認問題と答えを返す。"""
+    glossary = load_glossary()
+    available_lectures = sorted(
+        {term["lecture"] for term in glossary}
+    )
+
+    if lecture not in available_lectures:
+        available = ", ".join(
+            f"第{number}回" for number in available_lectures
+        )
+        return (
+            f"第{lecture}回は指定できません。"
+            f"利用可能なのは {available} です。"
+        )
+
+    terms = [
+        term
+        for term in glossary
+        if term["lecture"] == lecture
+    ]
+
+    term = random.choice(terms)
+
+    return json.dumps(
+        {
+            "question": f"「{term['term']}」の意味は？",
+            "answer": term["definition"],
+        },
+        ensure_ascii=False,
+    )
+
+
 def search_materials(query: str) -> str:
     """第1〜3回の本講義資料を検索し、関連ページの本文・タイトル・ページ番号を返す。
 
